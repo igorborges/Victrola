@@ -1,14 +1,14 @@
 {
   "expo": {
-    "name": "victrola",
+    "name": "Victrola",
     "slug": "victrola",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/victrolasquare.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/victrola.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#000"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -17,10 +17,13 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "com.victrola.appvictrola"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/victrolasquare.png"
+    },
+    "android": {
+      "package": "com.victrola.appvictrola"
     }
   }
 }
