@@ -1,15 +1,18 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Dimensions, SafeAreaView, RefreshControl, DatePickerAndroid } from 'react-native';
+import { Dimensions, SafeAreaView, RefreshControl, DatePickerAndroid, ToastAndroid } from 'react-native';
 import { StyleSheet, Image ,View, Text } from 'react-native';
 import { FlatGrid } from 'react-native-super-grid';
 import axios from 'axios';
 import ActionButton from 'react-native-action-button';
+export const loaderRef = React.createRef();
+
 
 export default function Example() {
   var header = "PRÉ-TEMPORADA: ROUND "
+  var rodada_atual = 0
   const [items, setItems] = React.useState([    
         { name: "", backgroundColor: "#008000", textColor: "#008000", pointsColor: "#008000", id: 0, pts: 10001 },     
-        { name: header, backgroundColor: "#008000", textColor: "#fff", pointsColor: "#008000", id: 0, pts: 10000 },     
+        { name: header + rodada_atual, backgroundColor: "#008000", textColor: "#fff", pointsColor: "#008000", id: 0, pts: 10000 },     
 
         { name: "5prastantas F.C.", slug: require("./assets/escudos/5prastantas-f-c.png"), backgroundColor: "#808080", textColor: "#ffffff", pointsColor: "#ffffff", id: 13945827, pts: 0 },
         { name: "AA AZULAO DO SUL", slug: require("./assets/escudos/aa-azulao-do-sul.png"), backgroundColor: "#ff241d", textColor: "#063780", pointsColor: "#063780", id: 6717458, pts: 0 },
@@ -38,53 +41,59 @@ export default function Example() {
         { name: "Sei de tudo e não ganho nada FC", slug: require("./assets/escudos/sei-de-tudo-e-nao-ganho-nada-fc.png"), backgroundColor: "#ff241d", textColor: "#19ff81", pointsColor: "#19ff81", id: 749772, pts: 0 },
         { name: "Sheik Tosado FC", slug: require("./assets/escudos/sheik-tosado-fc.png"), backgroundColor: "#ff241d", textColor: "#000000", pointsColor: "#000000", id: 13951041, pts: 0 },
         { name: "sinceridade: qualidade maldita!", slug: require("./assets/escudos/sinceridade-qualidade-maldita.png"), backgroundColor: "#000000", textColor: "#bf1d17", pointsColor: "#bf1d17", id: 5342721, pts: 0 },
-        { name: "Skalabuta FC", slug: require("./assets/escudos/skalabuta-fc.png"), backgroundColor: "#000000", textColor: "#ffffff", pointsColor: "#ffffff", id: 25871781, pts: 30 },
-        { name: "Sporting Draga", slug: require("./assets/escudos/sporting-draga.png"), backgroundColor: "#000000", textColor: "#ff241d", pointsColor: "#ff241d", id: 810144, pts: 20 },
+        { name: "Skalabuta FC", slug: require("./assets/escudos/skalabuta-fc.png"), backgroundColor: "#000000", textColor: "#ffffff", pointsColor: "#ffffff", id: 25871781, pts: 0 },
+        { name: "Sporting Draga", slug: require("./assets/escudos/sporting-draga.png"), backgroundColor: "#000000", textColor: "#ff241d", pointsColor: "#ff241d", id: 810144, pts: 0 },
         { name: "Tangamandapiense Social Clube", slug: require("./assets/escudos/tangamandapiense-social-clube.png"), backgroundColor: "#ffffff", textColor: "#4d004d", pointsColor: "#4d004d", id: 25867159, pts: 0 },
         { name: "tarcisiospfc", slug: require("./assets/escudos/tarcisiospfc.png"), backgroundColor: "#ff241d", textColor: "#ffffff", pointsColor: "#ffffff", id: 8917, pts: 0 },
         { name: "Time do Igor FC", slug: require("./assets/escudos/time-do-igor-fc.png"), backgroundColor: "#ffcb00", textColor: "#000000", pointsColor: "#000000", id: 1160952, pts: 0 },
         { name: "U.C. Leões de Judá", slug: require("./assets/escudos/u-c-leoes-de-juda.png"), backgroundColor: "#000000", textColor: "#ffcb00", pointsColor: "#ffcb00", id: 14972226, pts: 0 },
-        { name: "vernochi82", slug: require("./assets/escudos/vernochi82.png"), backgroundColor: "#a64b00", textColor: "#ff241d", pointsColor: "#ff241d", id: 25584876, pts: -21 },
-        { name: "Victrola F.C.", slug: require("./assets/escudos/victrola-f-c.png"), backgroundColor: "#808080", textColor: "#bf1d17", pointsColor: "#bf1d17", id: 13946184, pts: 50 },
+        { name: "vernochi82", slug: require("./assets/escudos/vernochi82.png"), backgroundColor: "#a64b00", textColor: "#ff241d", pointsColor: "#ff241d", id: 25584876, pts: 0 },
+        { name: "Victrola F.C.", slug: require("./assets/escudos/victrola-f-c.png"), backgroundColor: "#808080", textColor: "#bf1d17", pointsColor: "#bf1d17", id: 13946184, pts: 0 },
         { name: "VilãoFC", slug: require("./assets/escudos/vilaofc.png"), backgroundColor: "#000000", textColor: "#ffffff", pointsColor: "#ffffff", id: 2370283, pts: 0 },
 
         { name: "", backgroundColor: "#008000", textColor: "#008000", pointsColor: "#008000", id: 0, pts: -100 },     
         { name: "", backgroundColor: "#008000", textColor: "#008000", pointsColor: "#008000", id: 0, pts: -101 },        
   ]);
-
-  function refreshData(){
-    items.forEach(element => {
-
-      items.sort((a, b) => (a.pts <= b.pts) ? 1 : -1)
-       if(element.id != 0){
-        try {
-        // axios.get("https://cartolaigor-pjzxn.hoverfly.io/time/id/" + element.id)
-        axios.get("https://api.cartolafc.globo.com/time/id/" + element.id)
-          .then(res => {
-            if(res.data.pontos == undefined){
-              element.pts = 0;
-            }
-            else{
-              element.pts = parseInt(res.data.pontos);
-              console.log(res.data.time.nome + " " + res.data.pontos)
-              try {
-              items.find( time => time.name == header).name += res.data.rodada_atual;
-              } catch(error1){
-                console.log(error1.response)
-              }
-              items.sort((a, b) => (a.pts <= b.pts) ? 1 : -1)
-              setItems([...items], items);
-              console.log(element.name + " " + element.pts)
-            }                 
-          }
-        )                                         
-      }  catch(error) {
-        console.log(error.response)}
-    } 
-    
-    });    
-  }  
   
+  var status = 1
+  function refreshData(){    
+    // axios.get("https://cartolaigor-pjzxn.hoverfly.io/mercado/status")    
+    axios.get("https://api.cartolafc.globo.com/mercado/status")
+      .then(res => {
+        status = res.data.status_mercado;
+        rodada_atual = res.data.rodada_atual   
+        items[1].name = header + rodada_atual     
+        setItems([...items], items);      
+      });
+
+    if(status != 1){
+      items.forEach(element => {
+
+        items.sort((a, b) => (a.pts <= b.pts) ? 1 : -1)
+        if(element.id != 0){
+          try {
+            // axios.get("https://cartolaigor-pjzxn.hoverfly.io/time/id/" + element.id)
+            axios.get("https://api.cartolafc.globo.com/time/id/" + element.id)
+              .then(res => {
+                if(res.data.pontos == undefined){
+                  element.pts = 0;              
+                }
+                else{
+                  element.pts = parseInt(res.data.pontos);
+                  // console.log(res.data.time.nome + " " + res.data.pontos)              
+                  items.sort((a, b) => (a.pts <= b.pts) ? 1 : -1)
+                  setItems([...items], items);
+                  // console.log(element.name + " " + element.pts)
+                }   
+              }
+            )                                         
+          }catch(error) {
+          console.log(error.response)
+          }
+        }        
+      });    
+    }
+  }    
   
   useState(() => {
     refreshData();
@@ -98,36 +107,29 @@ export default function Example() {
     return () => clearInterval(interval);
   }, []);
 
-
   return (
     <View style={{ flex:1 }}>
             
-
       <FlatGrid
-        // onRefresh={() => refreshData}        
         itemDimension={Dimensions.get('window').width}              
         data={items}
         style={styles.gridView}
         backgroundColor="#008000"
         showsVerticalScrollIndicator={false}
-        // staticDimension={300}
-        // fixed
         spacing={5}
-        // onChange = {changeInput} 
         renderItem={({ item, items }) => (     
-              
+          
+
           <View style={{ flexDirection: 'row'}}>
 
             
-            <View style={[styles.itemContainer, { marginHorizontal: Dimensions.get('window').width*0.03 ,backgroundColor: item.backgroundColor, width: Dimensions.get('window').width*0.8 }]}>                          
-              {/* <View style={[styles.itemContainer, { backgroundColor: item.backgroundColor, width: Dimensions.get('window').width*0.08 }]}>
-              </View> */}
+            <View style={[styles.itemContainer, {shadowColor: item.backgroundColor, marginHorizontal: Dimensions.get('window').width*0.03 ,backgroundColor: item.backgroundColor, width: Dimensions.get('window').width*0.8 }]}>                          
               <Text style = {[styles.itemName, {color: item.textColor}]}>{item.name}</Text>                      
             </View>
 
             <Image source={item.slug} style = {{marginVertical: Dimensions.get('window').height*-0.001 ,marginHorizontal: Dimensions.get('window').width*-0.01, position: 'absolute', height: Dimensions.get('window').width*0.07, width: Dimensions.get('window').width*0.07, resizeMode : 'stretch'}}/>
 
-            <View style={[styles.itemContainer, { marginHorizontal: Dimensions.get('window').width*-0.022, backgroundColor: item.backgroundColor, width: Dimensions.get('window').width*0.14 }]}>
+            <View style={[styles.itemContainer, {shadowColor: item.backgroundColor, marginHorizontal: Dimensions.get('window').width*-0.022, backgroundColor: item.backgroundColor, width: Dimensions.get('window').width*0.14 }]}>
               <Text style={[styles.itemName, {color: item.pointsColor}]}>{item.pts}</Text>          
             </View>
 
@@ -136,13 +138,13 @@ export default function Example() {
       />
       <ActionButton
         buttonColor="#000"
-        onPress={() => { refreshData() } }
+        onPress={() => {
+           refreshData() ;
+          } }
         buttonText= "↻"
       />
     </View>
   );
-
-  
 }
 
 const styles = StyleSheet.create({
@@ -154,8 +156,17 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     padding: 5,
     height: Dimensions.get('window').width*0.08,
-    alignItems: "center",
-    // opacity: 1
+    alignItems: "center",  
+
+    // shadowOffset: {
+    //   width: 3,
+    //   height: 3,
+    // },
+    // shadowOpacity: 0.8,
+    // shadowRadius: 3.46,
+    // elevation: 5,
+
+    // opacity: 0.9,    
     margin: 1
   },
   itemName: {

@@ -23,7 +23,8 @@
       "favicon": "./assets/victrolasquare.png"
     },
     "android": {
-      "package": "com.victrola.appvictrola"
+      "package": "com.victrola.appvictrola",
+      "versionCode": 1
     }
   }
 }
