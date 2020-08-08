@@ -52,7 +52,7 @@ export default function Example() {
         { name: "VilãoFC", slug: require("./assets/escudos/vilaofc.png"), backgroundColor: "#000000", textColor: "#ffffff", pointsColor: "#ffffff", id: 2370283, pts: 0 },
 
         { name: "", backgroundColor: "#008000", textColor: "#008000", pointsColor: "#008000", id: 0, pts: -100 },     
-        { name: "", backgroundColor: "#008000", textColor: "#008000", pointsColor: "#008000", id: 0, pts: -101 },        
+        // { name: "", backgroundColor: "#008000", textColor: "#008000", pointsColor: "#008000", id: 0, pts: -101 },        
   ]);
   
   var status = 1
@@ -68,6 +68,7 @@ export default function Example() {
 
     if(status != 1){
       items.forEach(element => {
+
 
         items.sort((a, b) => (a.pts <= b.pts) ? 1 : -1)
         if(element.id != 0){
@@ -103,7 +104,7 @@ export default function Example() {
   useEffect(() => {
     const interval = setInterval(() => {      
       refreshData()
-    }, 30000);
+    }, 60000);
     return () => clearInterval(interval);
   }, []);
 
@@ -117,19 +118,26 @@ export default function Example() {
         backgroundColor="#008000"
         showsVerticalScrollIndicator={false}
         spacing={5}
-        renderItem={({ item, items }) => (     
+        renderItem={({ item, index }) => (     
           
 
           <View style={{ flexDirection: 'row'}}>
 
-            
-            <View style={[styles.itemContainer, {shadowColor: item.backgroundColor, marginHorizontal: Dimensions.get('window').width*0.03 ,backgroundColor: item.backgroundColor, width: Dimensions.get('window').width*0.8 }]}>                          
-              <Text style = {[styles.itemName, {color: item.textColor}]}>{item.name}</Text>                      
+          {/* Indices */}
+            <View style={[index % 6 == 1 && index > 2 ? { marginBottom: Dimensions.get('window').width*0.04 }:{}, styles.itemContainer, {backgroundColor: item.backgroundColor, width: Dimensions.get('window').width*0.08}]}>                          
+              <Text style = {[styles.itemName, {fontSize: 15, color: item.pointsColor}]}>{index - 1}</Text>              
             </View>
 
-            <Image source={item.slug} style = {{marginVertical: Dimensions.get('window').height*-0.001 ,marginHorizontal: Dimensions.get('window').width*-0.01, position: 'absolute', height: Dimensions.get('window').width*0.07, width: Dimensions.get('window').width*0.07, resizeMode : 'stretch'}}/>
+          {/* Nome dos times */}
+            <View style={[styles.itemContainer, {marginHorizontal: Dimensions.get('window').width*0.003 ,backgroundColor: item.backgroundColor, width: Dimensions.get('window').width*0.74}]}>                          
+              <Text style = {[styles.itemName, {color: item.textColor}]}>{item.name}</Text>            
+            </View>
 
-            <View style={[styles.itemContainer, {shadowColor: item.backgroundColor, marginHorizontal: Dimensions.get('window').width*-0.022, backgroundColor: item.backgroundColor, width: Dimensions.get('window').width*0.14 }]}>
+          {/* Escudo dos times */}
+            <Image source={item.slug} style = {{marginVertical: Dimensions.get('window').height*-0.001 ,marginHorizontal: Dimensions.get('window').width*0.06, position: 'absolute', height: Dimensions.get('window').width*0.07, width: Dimensions.get('window').width*0.07, resizeMode : 'stretch'}}/>
+
+          {/* Pontuacao dos times */}
+            <View style={[styles.itemContainer, {shadowColor: item.backgroundColor, marginHorizontal: Dimensions.get('window').width*0.003, backgroundColor: item.backgroundColor, width: Dimensions.get('window').width*0.14 }]}>
               <Text style={[styles.itemName, {color: item.pointsColor}]}>{item.pts}</Text>          
             </View>
 
@@ -156,7 +164,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     padding: 5,
     height: Dimensions.get('window').width*0.08,
-    alignItems: "center",  
+    alignItems: "center",
 
     // shadowOffset: {
     //   width: 3,
@@ -170,9 +178,14 @@ const styles = StyleSheet.create({
     margin: 1
   },
   itemName: {
-    fontSize: 18,
+    fontSize: 17.5,
     fontWeight: '600'    
-  }
+  },
+  separator: {
+    flex: 1, 
+    borderWidth: 1, 
+    borderColor: 'red'
+   },
   
 });
 
