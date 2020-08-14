@@ -6,9 +6,9 @@
     "orientation": "portrait",
     "icon": "./assets/victrolasquare.png",
     "splash": {
+      "backgroundColor": "#000",
       "image": "./assets/victrola.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#000"
+      "resizeMode": "contain"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
