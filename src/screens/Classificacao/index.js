@@ -4,7 +4,7 @@ import { StyleSheet, Image, View, Text } from 'react-native';
 import { FlatGrid } from 'react-native-super-grid';
 import axios from 'axios';
 export const loaderRef = React.createRef();
-import PTRView from 'react-native-pull-to-refresh';
+// import PTRView from 'react-native-pull-to-refresh';
 
 
 
@@ -158,12 +158,12 @@ export default function Example() {
   }, []);
 
   return (
-    <PTRView style={{ backgroundColor: "#008000" }} onRefresh={function () {
-      return new Promise((resolve) => {
-        refreshData();
-        setTimeout(() => { resolve() }, 2000)
-      });
-    }} >
+  //   <PTRView style={{ backgroundColor: "#008000" }} onRefresh={function () {
+  //     return new Promise((resolve) => {
+  //       refreshData();
+  //       setTimeout(() => { resolve() }, 2000)
+  //     });
+  //   }} >
       <View style={{ flex: 1 }}>
 
         <FlatGrid
@@ -205,7 +205,7 @@ export default function Example() {
         />
 
       </View>
-    </PTRView>
+    // </PTRView>
   );
 }
 
