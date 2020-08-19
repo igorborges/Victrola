@@ -179,7 +179,7 @@ export default function Example() {
 
               {/* Indices */}
               <View style={[styles.itemContainer, { borderColor: item.pointsColor, backgroundColor: item.backgroundColor, width: Dimensions.get('window').width * 0.08 }]}>
-                <Text style={[styles.itemName, { fontSize: 15, color: item.pointsColor }]}>{index - 1}</Text>
+                <Text adjustsFontSizeToFit={true} style={[styles.itemName, { fontSize: 15, color: item.pointsColor }]}>{index - 1}</Text>
               </View>
 
               {/* Nome dos times */}

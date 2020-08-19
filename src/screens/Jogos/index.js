@@ -366,7 +366,7 @@ export default function Example() {
               marginHorizontal: Dimensions.get('window').width * 0.003,              
               borderWidth: 0
             }]}>
-              <Text style={[styles.itemName, { color: "#fff", fontSize: 20 }]}>X</Text>
+              <Text adjustsFontSizeToFit={true} style={[styles.itemName, { color: "#fff", fontSize: 20 }]}>X</Text>
             </View>
 
 
