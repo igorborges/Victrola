@@ -1,11 +1,13 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Dimensions, SafeAreaView, RefreshControl, DatePickerAndroid, ToastAndroid } from 'react-native';
+import { Dimensions, SafeAreaView, RefreshControl, DatePickerAndroid, ToastAndroid, Button } from 'react-native';
 import { StyleSheet, Image, View, Text } from 'react-native';
 import { FlatGrid } from 'react-native-super-grid';
 import axios from 'axios';
 export const loaderRef = React.createRef();
 import PTRView from 'react-native-pull-to-refresh';
-import { ForceTouchGestureHandler } from 'react-native-gesture-handler';
+import { ForceTouchGestureHandler, TouchableHighlight } from 'react-native-gesture-handler';
+import Modal from 'react-native-modal';
+
 
 
 
@@ -263,6 +265,14 @@ export default function Example() {
     // refreshData()
   }, []);
 
+
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+
+
   return (
     <PTRView style={{ backgroundColor: "#008000" }} onRefresh={function () {
       return new Promise((resolve) => {
@@ -270,74 +280,88 @@ export default function Example() {
         setTimeout(() => { resolve() }, 2000)
       });
     }} >
-    <View style={{ flex: 1 }}>
+      <View style={{ flex: 1 }}>
 
-      <FlatGrid
-        itemDimension={Dimensions.get('window').width}
-        data={items}
-        style={styles.gridView}
-        backgroundColor="#008000"
-        showsVerticalScrollIndicator={false}
-        spacing={5}
-        // numColumns={2}
-        renderItem={({ item, index }) => (
+        <FlatGrid
+          itemDimension={Dimensions.get('window').width}
+          data={items}
+          style={styles.gridView}
+          backgroundColor="#008000"
+          showsVerticalScrollIndicator={false}
+          spacing={5}
+          // numColumns={2}
+          renderItem={({ item, index }) => (
 
-          <View style={{ flexDirection: 'row' }}>
+            <View style={{ flexDirection: 'row' }}>
 
 
-{/* Header de séries */}
-            <View style={[!item.header || item.rodada != rodada_atual ? { display: 'none', borderWidth: 0, } : { justifyContent: 'center', borderWidth: 1, },            
-            styles.itemContainer,
-            {
-              marginHorizontal: Dimensions.get('window').width * 0.003,
-              width: Dimensions.get('window').width * 0.97,
-              backgroundColor: item.backgroundColor,
-            }]}>
-              <Text assstyle={[styles.itemName, { fontSize: 20, marginVertical: Dimensions.get('window').height * 0, color: "#ffffff" }]}>{item.serie}</Text>
-            </View>
 
-{/* Nome Time Home */}
-            <View style={[item.distrital || item.header || item.rodada != rodada_atual ? { marginVertical: Dimensions.get('window').height * 0, height: Dimensions.get('window').height * 0, display: 'none', borderWidth: 0, } : { width: Dimensions.get('window').width * 0.355, borderWidth: 1, },            
-            styles.itemContainer,
-            {
-              marginHorizontal: Dimensions.get('window').width * 0.003,
-              backgroundColor: item.backgroundColorHome,
-              borderColor: item.pointsColorHome,
-            }
-            ]}>
-              <Text allowFontScaling={true} numberOfLines={1} style={[styles.itemName, { color: item.textColorHome }]}>{item.nameHome}</Text>
-            </View>
 
-{/* Pontuacao do time de Casa */}
-            <View style={[item.distrital || item.header || item.rodada != rodada_atual ? { marginVertical: Dimensions.get('window').height * 0, height: Dimensions.get('window').height * 0, display: 'none', borderWidth: 0, } : { width: Dimensions.get('window').width * 0.09, borderWidth: 1, },
-            styles.itemContainer, {
-              marginHorizontal: Dimensions.get('window').width * 0.003,
-              backgroundColor: item.backgroundColorHome,
-              borderColor: item.pointsColorHome,              
-            }
-            ]}>
-              <Text adjustsFontSizeToFit={true} style={[styles.itemName, { color: item.pointsColorHome}]}>{item.ptsHome}</Text>
-            </View>
 
-{/* Escudo do time Home */}
-            <View style={item.distrital || item.header || item.rodada != rodada_atual ? { marginVertical: Dimensions.get('window').height * 0, height: Dimensions.get('window').height * 0, display: 'none'} : {}}>
-              <Image source={item.slugHome}
-                style={[item.distrital || item.header || item.rodada != rodada_atual ? {
-                  display: 'none', height: Dimensions.get('window').width * 0,
-                  width: Dimensions.get('window').width * 0,
-                  marginVertical: Dimensions.get('window').height * 0
-                } : {
-                    height: Dimensions.get('window').width * 0.05,
-                    width: Dimensions.get('window').width * 0.05,
-                    marginVertical: Dimensions.get('window').height * -0.005,
-                    marginHorizontal: Dimensions.get('window').width * -0.47,
-                    position: 'absolute',
-                    resizeMode: 'stretch'
-                  }]} />
-            </View>
+              {/* Header de séries */}
+              <View style={[!item.header || item.rodada != rodada_atual ? { display: 'none', borderWidth: 0, } : { justifyContent: 'center', borderWidth: 1, },
+              styles.itemContainer,
+              {
+                marginHorizontal: Dimensions.get('window').width * 0.003,
+                width: Dimensions.get('window').width * 0.97,
+                backgroundColor: item.backgroundColor,
+              }]}>
+                <Text assstyle={[styles.itemName, { fontSize: 20, marginVertical: Dimensions.get('window').height * 0, color: "#ffffff" }]}>{item.serie}</Text>
+              </View>
 
-{/* Num de atletas pontuando Home*/}
-            <View style={[item.distrital || item.header || item.rodada != rodada_atual ? {
+
+              <TouchableHighlight onPress={toggleModal}>
+                {/* Nome Time Home */}
+                <View style={[item.distrital || item.header || item.rodada != rodada_atual ? { marginVertical: Dimensions.get('window').height * 0, height: Dimensions.get('window').height * 0, display: 'none', borderWidth: 0, } : { width: Dimensions.get('window').width * 0.355, borderWidth: 1, },
+                styles.itemContainer,
+                {
+                  marginHorizontal: Dimensions.get('window').width * 0.003,
+                  backgroundColor: item.backgroundColorHome,
+                  borderColor: item.pointsColorHome,
+                }
+                ]}>
+                  <Text allowFontScaling={true} numberOfLines={1} style={[styles.itemName, { color: item.textColorHome }]}>{item.nameHome}</Text>
+                  <Modal isVisible={isModalVisible}>
+                    <View style={{ flex: 1 }}>
+                      <Text>Hello!</Text>
+
+                      <Button style={[onPress = { toggleModal }]}>{item?.nameHome}</Button>
+                    </View>
+                  </Modal>
+                </View>
+              </TouchableHighlight>
+
+
+              {/* Pontuacao do time de Casa */}
+              <View style={[item.distrital || item.header || item.rodada != rodada_atual ? { marginVertical: Dimensions.get('window').height * 0, height: Dimensions.get('window').height * 0, display: 'none', borderWidth: 0, } : { width: Dimensions.get('window').width * 0.09, borderWidth: 1, },
+              styles.itemContainer, {
+                marginHorizontal: Dimensions.get('window').width * 0.003,
+                backgroundColor: item.backgroundColorHome,
+                borderColor: item.pointsColorHome,
+              }
+              ]}>
+                <Text adjustsFontSizeToFit={true} style={[styles.itemName, { color: item.pointsColorHome }]}>{item.ptsHome}</Text>
+              </View>
+
+              {/* Escudo do time Home */}
+              <View style={item.distrital || item.header || item.rodada != rodada_atual ? { marginVertical: Dimensions.get('window').height * 0, height: Dimensions.get('window').height * 0, display: 'none' } : {}}>
+                <Image source={item.slugHome}
+                  style={[item.distrital || item.header || item.rodada != rodada_atual ? {
+                    display: 'none', height: Dimensions.get('window').width * 0,
+                    width: Dimensions.get('window').width * 0,
+                    marginVertical: Dimensions.get('window').height * 0
+                  } : {
+                      height: Dimensions.get('window').width * 0.05,
+                      width: Dimensions.get('window').width * 0.05,
+                      marginVertical: Dimensions.get('window').height * -0.005,
+                      marginHorizontal: Dimensions.get('window').width * -0.47,
+                      position: 'absolute',
+                      resizeMode: 'stretch'
+                    }]} />
+              </View>
+
+              {/* Num de atletas pontuando Home*/}
+              <View style={[item.distrital || item.header || item.rodada != rodada_atual ? {
                 display: 'none', width: Dimensions.get('window').width * 0,
                 height: Dimensions.get('window').width * 0
               } : {
@@ -360,60 +384,60 @@ export default function Example() {
 
 
 
-{/*   X   */}
-            <View style={[item.distrital || item.header || index < 2 || item.rodada != rodada_atual ? { marginVertical: Dimensions.get('window').height * 0, height: Dimensions.get('window').height * 0, display: 'none' } : { width: Dimensions.get('window').width * 0.054 },
-            styles.itemContainer, {
-              marginHorizontal: Dimensions.get('window').width * 0.003,              
-              borderWidth: 0
-            }]}>
-              <Text style={[styles.itemName, { color: "#fff", fontSize: 20 }]}>X</Text>
-            </View>
+              {/*   X   */}
+              <View style={[item.distrital || item.header || index < 2 || item.rodada != rodada_atual ? { marginVertical: Dimensions.get('window').height * 0, height: Dimensions.get('window').height * 0, display: 'none' } : { width: Dimensions.get('window').width * 0.054 },
+              styles.itemContainer, {
+                marginHorizontal: Dimensions.get('window').width * 0.003,
+                borderWidth: 0
+              }]}>
+                <Text adjustsFontSizeToFit={true} style={[styles.itemName, { color: "#fff", fontSize: 20 }]}>X</Text>
+              </View>
 
 
-{/* Pontuacao do time de Fora */}
-            <View style={[item.distrital || item.header || item.rodada != rodada_atual ? { marginVertical: Dimensions.get('window').height * 0, height: Dimensions.get('window').height * 0, display: 'none', borderWidth: 0, } : { width: Dimensions.get('window').width * 0.09, borderWidth: 1, },
-            styles.itemContainer, {
-              marginHorizontal: Dimensions.get('window').width * 0.003,
-              backgroundColor: item.backgroundColorAway,
-              borderColor: item.pointsColorAway,
-            }]}>
-              <Text adjustsFontSizeToFit={true} style={[styles.itemName, { color: item.pointsColorAway }]}>{item.ptsAway}</Text>
-            </View>
+              {/* Pontuacao do time de Fora */}
+              <View style={[item.distrital || item.header || item.rodada != rodada_atual ? { marginVertical: Dimensions.get('window').height * 0, height: Dimensions.get('window').height * 0, display: 'none', borderWidth: 0, } : { width: Dimensions.get('window').width * 0.09, borderWidth: 1, },
+              styles.itemContainer, {
+                marginHorizontal: Dimensions.get('window').width * 0.003,
+                backgroundColor: item.backgroundColorAway,
+                borderColor: item.pointsColorAway,
+              }]}>
+                <Text adjustsFontSizeToFit={true} style={[styles.itemName, { color: item.pointsColorAway }]}>{item.ptsAway}</Text>
+              </View>
 
 
 
-{/* Nome Time away */}
-            <View style={[item.distrital || item.header || item.rodada != rodada_atual ? { marginVertical: Dimensions.get('window').height * 0, height: Dimensions.get('window').height * 0, display: 'none', borderWidth: 0, } : { width: Dimensions.get('window').width * 0.355, borderWidth: 1, },
-            styles.itemContainer,
-            {
-              marginHorizontal: Dimensions.get('window').width * 0.003,
-              backgroundColor: item.backgroundColorAway,
-              borderColor: item.pointsColorAway,
-              borderWidth: 1,
-            }]}>
-              <Text allowFontScaling={true} numberOfLines={1} style={[styles.itemName, { color: item.textColorAway }]}>{item.nameAway}</Text>
-            </View>
+              {/* Nome Time away */}
+              <View style={[item.distrital || item.header || item.rodada != rodada_atual ? { marginVertical: Dimensions.get('window').height * 0, height: Dimensions.get('window').height * 0, display: 'none', borderWidth: 0, } : { width: Dimensions.get('window').width * 0.355, borderWidth: 1, },
+              styles.itemContainer,
+              {
+                marginHorizontal: Dimensions.get('window').width * 0.003,
+                backgroundColor: item.backgroundColorAway,
+                borderColor: item.pointsColorAway,
+                borderWidth: 1,
+              }]}>
+                <Text allowFontScaling={true} numberOfLines={1} style={[styles.itemName, { color: item.textColorAway }]}>{item.nameAway}</Text>
+              </View>
 
-{/* Escudo do time Away */}
-            <View style={item.distrital || item.header || item.rodada != rodada_atual ? { marginVertical: Dimensions.get('window').height * 0, height: Dimensions.get('window').height * 0, display: 'none' } : {}}>
-              <Image source={item.slugAway}
-                style={[item.distrital || item.header || item.rodada != rodada_atual ? {
-                  display: 'none', height: Dimensions.get('window').width * 0,
-                  width: Dimensions.get('window').width * 0,
-                  marginVertical: Dimensions.get('window').height * 0
-                } : {
-                    height: Dimensions.get('window').width * 0.05,
-                    width: Dimensions.get('window').width * 0.05,
-                    marginVertical: Dimensions.get('window').height * -0.005,
-                    marginHorizontal: Dimensions.get('window').width * -0.04,
-                    position: 'absolute',
-                    resizeMode: 'stretch'
-                  }]} />
-            </View>
+              {/* Escudo do time Away */}
+              <View style={item.distrital || item.header || item.rodada != rodada_atual ? { marginVertical: Dimensions.get('window').height * 0, height: Dimensions.get('window').height * 0, display: 'none' } : {}}>
+                <Image source={item.slugAway}
+                  style={[item.distrital || item.header || item.rodada != rodada_atual ? {
+                    display: 'none', height: Dimensions.get('window').width * 0,
+                    width: Dimensions.get('window').width * 0,
+                    marginVertical: Dimensions.get('window').height * 0
+                  } : {
+                      height: Dimensions.get('window').width * 0.05,
+                      width: Dimensions.get('window').width * 0.05,
+                      marginVertical: Dimensions.get('window').height * -0.005,
+                      marginHorizontal: Dimensions.get('window').width * -0.04,
+                      position: 'absolute',
+                      resizeMode: 'stretch'
+                    }]} />
+              </View>
 
 
-{/* Num de atletas pontuando Away*/}
-            <View style={[item.distrital || item.header || item.rodada != rodada_atual ? {
+              {/* Num de atletas pontuando Away*/}
+              <View style={[item.distrital || item.header || item.rodada != rodada_atual ? {
                 display: 'none', width: Dimensions.get('window').width * 0,
                 height: Dimensions.get('window').width * 0
               } : {
@@ -434,8 +458,8 @@ export default function Example() {
                 <Text adjustsFontSizeToFit={true} style={[styles.itemName, { fontSize: 9, color: item.backgroundColorAway }]}>{item.numAtletasPontuandoAway}</Text>
               </View>
 
-            {/* Indices */}
-            {/* <View style={[item.distrital ? { display: 'none' } : {},
+              {/* Indices */}
+              {/* <View style={[item.distrital ? { display: 'none' } : {},
               index % 6 == 1 && index > 2 ? { marginBottom: Dimensions.get('window').width * 0.04 } : {},
               index > 1 ? { backgroundColor: coresPorSerie[contadorDeCores[index]] } : {},
               styles.itemContainer,
@@ -445,8 +469,8 @@ export default function Example() {
               </View> */}
 
 
-            {/* Nome dos times */}
-            {/* <View style={[item.distrital ? { display: 'none', width: Dimensions.get('window').width * 0 } : { width: Dimensions.get('window').width * 0.74 },
+              {/* Nome dos times */}
+              {/* <View style={[item.distrital ? { display: 'none', width: Dimensions.get('window').width * 0 } : { width: Dimensions.get('window').width * 0.74 },
               styles.itemContainer,
               {
                 marginHorizontal: Dimensions.get('window').width * 0.003,
@@ -457,9 +481,9 @@ export default function Example() {
               </View> */}
 
 
-            {/* Escudo dos times */}
-            {/* <View style={item.distrital ? {display: 'none'} : {}}> */}
-            {/* <Image source={item.slug}
+              {/* Escudo dos times */}
+              {/* <View style={item.distrital ? {display: 'none'} : {}}> */}
+              {/* <Image source={item.slug}
                 style={[item.distrital ? {
                   display: 'none', height: Dimensions.get('window').width * 0,
                   width: Dimensions.get('window').width * 0,
@@ -472,11 +496,11 @@ export default function Example() {
                   position: 'absolute',
                   resizeMode: 'stretch'
                 }]} /> */}
-            {/* </View> */}
+              {/* </View> */}
 
 
-            {/* Pontuacao dos times */}
-            {/* <View style={[item.distrital ? { display: 'none', width: Dimensions.get('window').width * 0 } : { width: Dimensions.get('window').width * 0.14 },
+              {/* Pontuacao dos times */}
+              {/* <View style={[item.distrital ? { display: 'none', width: Dimensions.get('window').width * 0 } : { width: Dimensions.get('window').width * 0.14 },
               styles.itemContainer, {
                 shadowColor: item.backgroundColor,
                 marginHorizontal: Dimensions.get('window').width * 0.003,
@@ -487,8 +511,8 @@ export default function Example() {
               </View> */}
 
 
-            {/* Num de atletas pontuando */}
-            {/* <View style={[item.distrital ? {
+              {/* Num de atletas pontuando */}
+              {/* <View style={[item.distrital ? {
                 display: 'none', width: Dimensions.get('window').width * 0,
                 height: Dimensions.get('window').width * 0
               } : {
@@ -509,14 +533,14 @@ export default function Example() {
                 <Text style={[styles.itemName, { fontSize: 10, color: item.backgroundColor }]}>{item.numAtletasPontuando}</Text>
               </View> */}
 
-          </View>
-        )}
-      />
+            </View>
+          )}
+        />
 
 
-    </View>
+      </View>
 
-   </PTRView>
+    </PTRView>
   );
 }
 
