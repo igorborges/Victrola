@@ -170,6 +170,7 @@ export default function Example() {
         axios.get("https://api.cartolafc.globo.com/atletas/pontuados")
           .then(responseAtletas => {
             atletasPontuando = responseAtletas.data.atletas;
+            // console.log(atletasPontuando)
           });
       }, 500);
 
@@ -180,45 +181,79 @@ export default function Example() {
           try {
 
             setTimeout(function () {
-              if (!element.pegouAtletas) {
+              if (!element.pegouAtletasHome) {
                 // console.log("segunda chamada /id") // ---------------------------------------------------------------------------------------------
                 // axios.get("https://cartolaigor-pjzxn.hoverfly.io/time/id/" + element.id)
-                axios.get("https://api.cartolafc.globo.com/time/id/" + element.id + "/" + rodada_atual)
+                axios.get("https://api.cartolafc.globo.com/time/id/" + element.idHome + "/" + rodada_atual)
                   .then(res => {
                     if (res.status == 200) {
                       res.data.atletas.forEach(atleta => {
-                        element.atletas.push(atleta.atleta_id)
+                        element.atletasHome.push(atleta.atleta_id)
                       })
-                      element.pegouAtletas = true
-                      element.capitaoId = res.data.capitao_id;
+                      element.pegouAtletasHome = true
+                      element.capitaoIdHome = res.data.capitao_id;
+                      setItems([...items], items);
+                    }
+                  })
+              }
+
+              if (!element.pegouAtletasAway) {
+                // console.log("segunda chamada /id") // ---------------------------------------------------------------------------------------------
+                // axios.get("https://cartolaigor-pjzxn.hoverfly.io/time/id/" + element.id)
+                axios.get("https://api.cartolafc.globo.com/time/id/" + element.idAway + "/" + rodada_atual)
+                  .then(res => {
+                    if (res.status == 200) {
+                      res.data.atletas.forEach(atleta => {
+                        element.atletasAway.push(atleta.atleta_id)
+                      })
+                      element.pegouAtletasAway = true
+                      element.capitaoIdAway = res.data.capitao_id;
                       setItems([...items], items);
                     }
                   })
               }
             }, 500);
             setTimeout(function () {
-              if (element.pegouAtletas) {
-                element.pts = 0
-                element.numAtletasPontuando = 0;
-                element.atletas.forEach(atleta => {
+              if (element.pegouAtletasHome) {
+                element.ptsHome = 0
+                element.numAtletasPontuandoHome = 0;
+                element.atletasHome.forEach(atleta => {
                   try {
-                    element.pts += atletasPontuando[atleta].pontuacao;
-                    element.numAtletasPontuando += 1;
+                    element.ptsHome += atletasPontuando[atleta].pontuacao;
+                    element.numAtletasPontuandoHome += 1;
                   } catch { }
                 })
                 try {
-                  element.pts += atletasPontuando[element.capitaoId].pontuacao;
+                  element.ptsHome += atletasPontuando[element.capitaoIdHome].pontuacao;
                 } catch { }
-                element.pts = parseInt(element.pts);
+                element.ptsHome = parseInt(element.ptsHome);
 
                 // element.pts = parseInt(element.pts) > element.maiorPontuacao ? parseInt(element.pts) : element.maiorPontuacao;
                 //   element.pts = parseInt(pontuacao)
-                if (element.distrital) {
-                  element.pts = -50;
-                }
+
                 // items.sort((a, b) => (a.pts <= b.pts) ? 1 : -1)
                 setItems([...items], items);
+              }
 
+              if (element.pegouAtletasAway) {
+                element.ptsAway = 0
+                element.numAtletasPontuandoAway = 0;
+                element.atletasAway.forEach(atleta => {
+                  try {
+                    element.ptsAway += atletasPontuando[atleta].pontuacao;
+                    element.numAtletasPontuandoAway += 1;
+                  } catch { }
+                })
+                try {
+                  element.ptsAway += atletasPontuando[element.capitaoIdAway].pontuacao;
+                } catch { }
+                element.ptsAway = parseInt(element.ptsAway);
+
+                // element.pts = parseInt(element.pts) > element.maiorPontuacao ? parseInt(element.pts) : element.maiorPontuacao;
+                //   element.pts = parseInt(pontuacao)
+
+                // items.sort((a, b) => (a.pts <= b.pts) ? 1 : -1)
+                setItems([...items], items);
               }
             }, 1000);
           } catch (error) {
@@ -227,24 +262,39 @@ export default function Example() {
         }
       });
     }
-    else {
-      items.forEach(equipe => {
-        if (equipe.id != 0) {
-          if (equipe.pts > equipe.maiorPontuacao) {
-            equipe.maiorPontuacao = equipe.pts;
-          }
-          equipe.pts = equipe.maiorPontuacao;
-          if (equipe.distrital) {
-            equipe.pts = -50;
-          }
-          // items.sort((a, b) => (a.pts <= b.pts) ? 1 : -1)
-          equipe.atletas = [];
-          equipe.pegouAtletas = false;
-          equipe.numAtletasPontuando = 0;
-          setItems([...items], items);
-        }
-      })
-    }
+    // else {
+    //   items.forEach(equipe => {
+    //     if (equipe.idHome != 0) {
+    //       if (equipe.ptsHome > equipe.maiorPontuacao) {
+    //         equipe.maiorPontuacao = equipe.pts;
+    //       }
+    //       equipe.pts = equipe.maiorPontuacao;
+    //       if (equipe.distrital) {
+    //         equipe.pts = -50;
+    //       }
+    //       // items.sort((a, b) => (a.pts <= b.pts) ? 1 : -1)
+    //       equipe.atletas = [];
+    //       equipe.pegouAtletas = false;
+    //       equipe.numAtletasPontuando = 0;
+    //       setItems([...items], items);
+    //     }
+
+    //     if (equipe.id != 0) {
+    //       if (equipe.pts > equipe.maiorPontuacao) {
+    //         equipe.maiorPontuacao = equipe.pts;
+    //       }
+    //       equipe.pts = equipe.maiorPontuacao;
+    //       if (equipe.distrital) {
+    //         equipe.pts = -50;
+    //       }
+    //       // items.sort((a, b) => (a.pts <= b.pts) ? 1 : -1)
+    //       equipe.atletas = [];
+    //       equipe.pegouAtletas = false;
+    //       equipe.numAtletasPontuando = 0;
+    //       setItems([...items], items);
+    //     }
+    //   })
+    // }
 
   }
 
@@ -260,7 +310,7 @@ export default function Example() {
   // }, []);
 
   useEffect(() => {
-    // refreshData()
+    refreshData()
   }, []);
 
   return (
@@ -316,6 +366,7 @@ export default function Example() {
               borderColor: item.pointsColorHome,              
             }
             ]}>
+              {/* {console.log(item.ptsHome)} */}
               <Text adjustsFontSizeToFit={true} style={[styles.itemName, { color: item.pointsColorHome}]}>{item.ptsHome}</Text>
             </View>
 
