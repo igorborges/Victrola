@@ -16,7 +16,7 @@ export default function Example() {
     { name: "", backgroundColor: "#008000", textColor: "#008000", pointsColor: "#008000", id: 0, pts: 10001 },
     { name: header + rodada_atual, backgroundColor: "#008000", textColor: "#fff", pointsColor: "#008000", id: 0, pts: 10000 },
 
-    { name: "5prastantas F.C.", slug: require("../../assets/escudos/5prastantas-f-c.png"), backgroundColor: "#808080", textColor: "#ffffff", pointsColor: "#ffffff", id: 13945827, maiorPontuacao: 68, pontuacaoUltimaRodada: 34, pts: 0, atletas: [], pegouAtletas: false, numAtletasPontuando: 0, capitaoId: 0, distrital: false, isModalVisible: false },
+    { name: "5prastantas F.C.", slug: require("../../assets/escudos/5prastantas-f-c.png"), backgroundColor: "#808080", textColor: "#ffffff", pointsColor: "#ffffff", id: 13945827, maiorPontuacao: 68, pontuacaoUltimaRodada: 34, pts: 0, atletas: [70800, 86485, 38750, 88312, 98974, 82455, 78086, 72772, 80853, 83257, 8177, 892566], pegouAtletas: false, numAtletasPontuando: 0, capitaoId: 0, distrital: false, isModalVisible: false },
     { name: "AA AZULAO DO SUL", slug: require("../../assets/escudos/aa-azulao-do-sul.png"), backgroundColor: "#ff241d", textColor: "#063780", pointsColor: "#063780", id: 6717458, maiorPontuacao: 35, pontuacaoUltimaRodada: 35, pts: 0, atletas: [], pegouAtletas: false, numAtletasPontuando: 0, capitaoId: 0, distrital: false, isModalVisible: false },
     { name: "Akuma Sport Club", slug: require("../../assets/escudos/akuma-sport-club.png"), backgroundColor: "#ffffff", textColor: "#000000", pointsColor: "#000000", id: 483335, maiorPontuacao: 63, pontuacaoUltimaRodada: 38, pts: 0, atletas: [], pegouAtletas: false, numAtletasPontuando: 0, capitaoId: 0, distrital: false, isModalVisible: false },
     { name: "Atleticado", slug: require("../../assets/escudos/atleticado.png"), backgroundColor: "#4d004d", textColor: "#0066ff", pointsColor: "#0066ff", id: 661306, maiorPontuacao: 65, pontuacaoUltimaRodada: 21, pts: 0, atletas: [], pegouAtletas: false, numAtletasPontuando: 0, capitaoId: 0, distrital: false, isModalVisible: false },
@@ -132,21 +132,21 @@ export default function Example() {
         }
       });
     }
-    else {
-      items.forEach(equipe => {
-        if (equipe.id != 0) {
-          equipe.pontuacaoUltimaRodada = equipe.pts;
-          if (equipe.pts > equipe.maiorPontuacao) {
-            equipe.maiorPontuacao = equipe.pts;
-          }
-          equipe.atletas = [];
-          equipe.pegouAtletas = false;
-          equipe.numAtletasPontuando = 0;
+    // else {
+    //   items.forEach(equipe => {
+    //     if (equipe.id != 0) {
+    //       equipe.pontuacaoUltimaRodada = equipe.pts;
+    //       if (equipe.pts > equipe.maiorPontuacao) {
+    //         equipe.maiorPontuacao = equipe.pts;
+    //       }
+    //       equipe.atletas = [];
+    //       equipe.pegouAtletas = false;
+    //       equipe.numAtletasPontuando = 0;
 
-          setItems([...items], items);
-        }
-      })
-    }
+    //       setItems([...items], items);
+    //     }
+    //   })
+    // }
   }
   // useState(() => {
   //   refreshData();
@@ -154,13 +154,22 @@ export default function Example() {
 
 
   useEffect(() => {
+    getAtletas()
     refreshData()
   }, []);
+
+  function getAtletas() {
+    axios.get("https://api.cartolafc.globo.com/atletas/mercado")
+      .then(responseAtletas => {
+        const jsonAtletas = responseAtletas.data
+        // console.log(atletasPontuando)
+      });
+  }
 
 
   // const [isModalVisible, setModalVisible] = useState(false);
 
-  function toggleModal(item) {    
+  function toggleModal(item) {
     item.isModalVisible = !item.isModalVisible;
     setItems([...items], items);
   }
@@ -182,11 +191,11 @@ export default function Example() {
           showsVerticalScrollIndicator={false}
           spacing={5}
           renderItem={({ item, index }) => (
-            <TouchableHighlight onPress={() => item.id > 0 ? toggleModal(item) : {} }>
+            <TouchableHighlight onPress={() => item.id > 0 ? toggleModal(item) : {}}>
 
 
               <View style={{ flexDirection: 'row' }}>
-                
+
 
                 {/* Indices */}
                 <View style={[styles.itemContainer, { borderColor: item.pointsColor, backgroundColor: item.backgroundColor, width: Dimensions.get('window').width * 0.08 }]}>
@@ -211,11 +220,11 @@ export default function Example() {
                   <Text style={[styles.itemName, { fontSize: 10, color: item.backgroundColor }]}>{item.numAtletasPontuando}</Text>
                 </View>
 
-                
-                <Modal isVisible={item.isModalVisible} coverScreen={true} backdropColor={item.pointsColor} backdropOpacity={0.94} margin={Dimensions.get('window').width * 0.5} style={{width: 50}}>
-                  <View style={{ flex: 1 }} width={Dimensions.get('window').width * 0.5}>
 
-
+                <Modal isVisible={item.isModalVisible} coverScreen={true} backdropColor={item.pointsColor} backdropOpacity={0.94} >
+                  <View style={{ flex: 1, alignItems: 'center', marginVertical: Dimensions.get('window').width * 0.2 }} >
+                    {console.log(jsonAtletas.)}
+                    {item.id > 0 ? (item.atletas.map(x => <Text style={[styles.itemName, { fontSize: 20, color: item.backgroundColor, width: Dimensions.get('window').width * 0.9, marginVertical: Dimensions.get('window').width * 0.01 }]}>{x}</Text>)) : {}}
                     <Button title={item.name} color={item.backgroundColor} onPress={() => toggleModal(item)} />
                   </View>
                 </Modal>
@@ -258,7 +267,7 @@ const styles = StyleSheet.create({
     fontSize: 16.5,
     fontWeight: '600'
   }
-  
+
 
 });
 
