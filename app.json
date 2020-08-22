@@ -2,7 +2,7 @@
   "expo": {
     "name": "Premier Victrola",
     "slug": "victrola",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/victrolasquare.png",
     "splash": {
@@ -17,13 +17,13 @@
       "**/*"
     ],
     "ios": {
-      "bundleIdentifier": "com.victrola.appvictrola"
+      "bundleIdentifier": "com.victrola.appvictrola2"
     },
     "web": {
       "favicon": "./assets/victrolasquare.png"
     },
     "android": {
-      "package": "com.victrola.appvictrola",
+      "package": "com.victrola.appvictrola2",
       "versionCode": 1
     }
   }
