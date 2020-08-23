@@ -321,10 +321,10 @@ export default function Example() {
                     </View>
 
                     {item.id > 0 ? (item.atletas.map(x =>
-                      // clubes
                       <View style={{ flexDirection: 'row' }}>
+
+                        {/* clubes */}
                         <View style={[styles.itemContainer, { borderWidth: 1, borderColor: item.textColor, backgroundColor: item.backgroundColor, width: Dimensions.get('window').width * 0.08 }]}>
-                          {/* <Text adjustsFontSizeToFit={true} style={[styles.itemName, { fontSize: 25, color: item.pointsColor }]}>{posicoes[x.posicao_id]}</Text> */}
                           <Image source={{ uri: clubes[x.clube_id] }} style={{ marginVertical: Dimensions.get('window').height * 0.005, marginHorizontal: Dimensions.get('window').width * 0.06, height: Dimensions.get('window').width * 0.05, width: Dimensions.get('window').width * 0.05, resizeMode: 'stretch' }} />
                         </View>
 
@@ -344,9 +344,6 @@ export default function Example() {
                           <Text adjustsFontSizeToFit={true} numberOfLines={1} style={[styles.itemName, { color: item.pointsColor }]}>{x.status_id != 0 ? item.capitaoId == x.atleta_id ? '(' + x.pontos_num + ' x2) ' + x.pontos_num * 2 : x.pontos_num : '-'}</Text>
                         </View>
 
-                        {/* {console.log(x.clube_id)} */}
-                        {/* Escudo dos times */}
-
 
 
                       </View>)) : {}}
@@ -357,7 +354,7 @@ export default function Example() {
                         <Text adjustsFontSizeToFit={true} style={[{ color: item.backgroundColor }, styles.itemName]}>TOTAL:</Text>
                       </View>
 
-                      {/* ponntuacao total com capitao */}
+                      {/* pontuacao total com capitao */}
                       <View style={[styles.itemContainer, { borderWidth: 1, borderColor: item.backgroundColor, marginHorizontal: Dimensions.get('window').width * 0.003, backgroundColor: item.textColor, width: Dimensions.get('window').width * 0.24 }]}>
                         <Text adjustsFontSizeToFit={true} numberOfLines={1} style={[styles.itemName, { color: item.backgroundColor }]}>{item.pts}</Text>
                       </View>
@@ -365,11 +362,11 @@ export default function Example() {
 
                     {/* botao voltar */}
                     <TouchableHighlight onPress={() => toggleModal(item)} underlayColor={'#008000'} >
-                      <View style={[{ position: "relative" }, { borderWidth: 2,justifyContent: 'center' ,alignItems: 'center', fontSize: 20, height: Dimensions.get('window').height * 0.06, width: Dimensions.get('window').width * 0.95, marginVertical: '5%', marginHorizontal: '-17.5%' }]}>
-                        <Text adjustsFontSizeToFit={true} numberOfLines={1} style={[{fontSize:20}]}>Voltar</Text>
+                      <View style={[{ position: "relative" }, { borderWidth: 2, justifyContent: 'center', alignItems: 'center', fontSize: 20, height: Dimensions.get('window').height * 0.06, width: Dimensions.get('window').width * 0.95, marginVertical: '5%', marginHorizontal: '-17.5%' }]}>
+                        <Text adjustsFontSizeToFit={true} numberOfLines={1} style={[{ fontSize: 20 }]}>Voltar</Text>
                       </View>
                     </TouchableHighlight>
-                    
+
                   </View>
                 </Modal>
 
