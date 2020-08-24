@@ -270,11 +270,6 @@ export default function Example() {
     setItems([...items], items);
   }
 
-  handlerLongClick = () => {
-    //handler for Long Click
-    Alert.alert(' Button Long Pressed');
-  };
-
   return (
     <PTRView style={{ backgroundColor: "#008000" }} onRefresh={function () {
       return new Promise((resolve) => {
@@ -424,4 +419,8 @@ const styles = StyleSheet.create({
 
 
 });
+
+
+
+
 

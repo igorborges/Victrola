@@ -369,6 +369,11 @@ export default function Example() {
     setItems([...items], items);
   }
 
+  function toggleHighlighted(item) {
+    item.isHighlighted = !item.isHighlighted;
+    setItems([...items], items);
+  }
+
   return (
     <PTRView style={{ backgroundColor: "#008000" }} onRefresh={function () {
       return new Promise((resolve) => {
@@ -388,7 +393,7 @@ export default function Example() {
           // numColumns={2}
 
           renderItem={({ item, index }) => (
-            <TouchableHighlight onPress={() => item.idHome > 0 ? toggleModal(item) : {}}>
+            <TouchableHighlight onPress={() => item.idHome > 0 ? toggleModal(item) : {}} onLongPress={() => item.idHome > 0 ? toggleHighlighted(item) : {}}>
 
 
               <View style={{ flexDirection: 'row' }}>
@@ -489,12 +494,12 @@ export default function Example() {
 
                 {/*   X   */}
                 {item.rodada == items[0].rodada_atual && !item.header ? (
-                  <View style={[item.distrital || item.header || index < 2 ? { marginVertical: Dimensions.get('window').height * 0, height: Dimensions.get('window').height * 0, display: 'none' } : { width: Dimensions.get('window').width * 0.054 },
+                  <View style={[item.distrital || item.header || index < 2 ? { marginVertical: Dimensions.get('window').height * 0, height: Dimensions.get('window').height * 0, display: 'none' } : item.isHighlighted ? {backgroundColor: 'red', width: Dimensions.get('window').width * 0.054 } : { width: Dimensions.get('window').width * 0.054 } ,
                   styles.itemContainer, {
                     marginHorizontal: Dimensions.get('window').width * 0.003,
-                    borderWidth: 0
+                    borderWidth: 1
                   }]}>
-                    <Text adjustsFontSizeToFit={true} style={[styles.itemName, { color: "#fff", fontSize: 20 }]}>X</Text>
+                    <Text adjustsFontSizeToFit={true} numberOfLines={1} style={[styles.itemName, { color: "#fff", fontSize: 20 }]}>X</Text>
                   </View>
                 ) : [<View marginVertical={0} ></View>]}
 
