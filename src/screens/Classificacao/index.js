@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Dimensions, TouchableHighlight, TouchableOpacity, Button, SafeAreaView, RefreshControl, DatePickerAndroid, ToastAndroid, BackHandler } from 'react-native';
+import { Dimensions, TouchableHighlight, TouchableOpacity, Button, SafeAreaView, RefreshControl, DatePickerAndroid, ToastAndroid, BackHandler, AsyncStorage } from 'react-native';
 import { StyleSheet, Image, View, Text, Alert } from 'react-native';
 import { FlatGrid } from 'react-native-super-grid';
 import axios from 'axios';
@@ -8,6 +8,7 @@ import PTRView from 'react-native-pull-to-refresh';
 import Modal from 'react-native-modal';
 import Toast from 'react-native-root-toast';
 // import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Cache } from "react-native-cache";
 
 
 
@@ -17,6 +18,13 @@ export default function Example() {
   var posicoes = ["Error", "G", "L", "Z", "M", "A", "T"]
   var clubes = { 373: "https://s.glbimg.com/es/sde/f/organizacoes/2020/07/02/atletico-go-2020-45.png", 276: "https://s.glbimg.com/es/sde/f/organizacoes/2014/04/14/sao_paulo_45x45.png", 356: "https://s.glbimg.com/es/sde/f/organizacoes/2018/06/10/fortaleza-ec-45px.png", 292: "https://s.glbimg.com/es/sde/f/organizacoes/2015/07/21/sport45.png", 277: "https://s.glbimg.com/es/sde/f/organizacoes/2014/04/14/santos_45x45.png", 293: "https://s.glbimg.com/es/sde/f/organizacoes/2019/09/09/Athletico-PR-45x45.png", 263: "https://s.glbimg.com/es/sde/f/organizacoes/2019/02/04/botafogo-45.png", 262: "https://s.glbimg.com/es/sde/f/organizacoes/2018/04/09/Flamengo-45.png", 354: "https://s.glbimg.com/es/sde/f/organizacoes/2019/10/10/ceara-45x45.png", 267: "https://s.glbimg.com/es/sde/f/organizacoes/2016/07/29/Vasco-45.png", 266: "https://s.glbimg.com/es/sde/f/organizacoes/2014/04/14/fluminense_45x45.png", 265: "https://s.glbimg.com/es/sde/f/organizacoes/2014/04/14/bahia_45x45.png", 264: "https://s.glbimg.com/es/sde/f/organizacoes/2019/09/30/Corinthians_45.png", 280: "https://s.glbimg.com/es/sde/f/organizacoes/2020/01/01/45.png", 294: "https://s.glbimg.com/es/sde/f/organizacoes/2017/03/29/coritiba45.png", 282: "https://s.glbimg.com/es/sde/f/organizacoes/2017/11/23/Atletico-Mineiro-escudo45px.png", 285: "https://s.glbimg.com/es/sde/f/organizacoes/2016/05/03/inter45.png", 284: "https://s.glbimg.com/es/sde/f/organizacoes/2014/04/14/gremio_45x45.png", 290: "https://s.glbimg.com/es/sde/f/organizacoes/2019/05/01/Goias_45px.png", 275: "https://s.glbimg.com/es/sde/f/organizacoes/2014/04/14/palmeiras_45x45.png", }
 
+  const cache = new Cache({
+    namespace: "myapp",
+    policy: {
+      maxEntries: 50000
+    },
+    backend: AsyncStorage
+  });
 
 
   const [items, setItems] = React.useState([
@@ -105,7 +113,7 @@ export default function Example() {
           rodada_atual = res.data.rodada_atual - 1
         }
         items[1].name = header + rodada_atual
-        setItems([...items], items);
+        setItems(items);
       });
 
     if (firstTime) {
@@ -113,45 +121,50 @@ export default function Example() {
       firstTime = false;
     }
 
-    if (status == 2) {
-      // console.log("------entrou aqui2---------------")
+    if (status == 2) { // mercado fechado
 
-      setTimeout(function () {
+      setTimeout(function () { // pega atletas pontuando (tem que fazer sempre)
         axios.get("https://api.cartolafc.globo.com/atletas/pontuados")
           .then(responseAtletas => {
-            // console.log(responseAtletas.data)
             atletasPontuando = responseAtletas.data.atletas;
-            // console.log(atletasPontuando)
           });
       }, 500);
 
-      // console.log(atletasPontuando)
-      items.forEach(element => {
+      items.forEach(async element => {
 
         items.sort((a, b) => (a.pts <= b.pts) ? 1 : -1)
         if (element.id != 0) {
-          try {
-            setTimeout(function () {
-              if (!element.pegouAtletas) {
-                axios.get("https://api.cartolafc.globo.com/time/id/" + element.id + "/" + rodada_atual)
-                  .then(res => {
-                    // console.log(res.status)
-                    if (res.status == 200) {
-                      // res.data.atletas.forEach(atleta => {
-                      element.atletas = res.data.atletas;
-                      // })
-                      // console.log(element.atletas)
-                      element.pegouAtletas = true
-                      element.capitaoId = res.data.capitao_id;
-                      element.atletas.sort((a, b) => (a.posicao_id >= b.posicao_id) ? 1 : -1)
-                      setItems([...items], items);
-                    }
-                  })
-              }
 
-            }, 500);
-            setTimeout(function () {
+          try {            
+            console.log(await cache.peek(element.name) == undefined)
 
+            if (await cache.peek(element.name) != undefined) {
+
+              element = JSON.parse(await cache.get(element.name));              
+              console.log("buscou da cache");
+            } else {
+
+              setTimeout(async function () {
+                if (!element.pegouAtletas) {
+                  axios.get("https://api.cartolafc.globo.com/time/id/" + element.id + "/" + rodada_atual)
+                    .then(async res => {
+                      if (res.status == 200) {
+                        console.log("buscou do backend")
+                        element.atletas = res.data.atletas;
+                        element.pegouAtletas = true
+                        element.capitaoId = res.data.capitao_id;
+                        items[items.indexOf(items.find(k => k.name == element.name))] = element
+                        element.atletas.sort((a, b) => (a.posicao_id >= b.posicao_id) ? 1 : -1)
+                        setItems([...items], items);
+                        await cache.set(element.name, JSON.stringify(element));
+                      }
+                    })
+                }
+
+              }, 500);
+            }
+
+            setTimeout(async function () {
               if (element.pegouAtletas) {
                 element.pts = 0;
                 element.numAtletasPontuando = 0;
@@ -161,10 +174,6 @@ export default function Example() {
                     atleta.pontos_num = atletasPontuando[atleta.atleta_id].pontuacao;
                     atleta.status_id = 1 // 1 = pontuando, 0 = nao pontuando
                     element.numAtletasPontuando += 1;
-                    // console.log(!atleta.apelido.contains("(c)"))
-                    // if (element.capitaoId == atleta.atleta_id && !atleta.apelido.includes("(c)")) {
-                    //   atleta.apelido = atleta.apelido + " (c)"
-                    // }
                   } catch {
                     atleta.pontos_num = 0;
                     atleta.status_id = 0 // 1 = pontuando, 0 = nao pontuando
@@ -175,7 +184,8 @@ export default function Example() {
                   element.pts += atletasPontuando[element.capitaoId].pontuacao;
                 } catch { }
                 element.pts = parseInt(element.pts)
-                items.sort((a, b) => (a.pts <= b.pts) ? 1 : -1)
+                items[items.indexOf(items.find(k => k.name == element.name))] = element
+                items.sort((a, b) => (a.pts <= b.pts) ? 1 : -1)                
                 setItems([...items], items);
               }
             }, 1000);
@@ -185,6 +195,7 @@ export default function Example() {
         }
       });
     } else {
+      await cache.clearAll()
       items.forEach(element => {
 
         items.sort((a, b) => (a.pts <= b.pts) ? 1 : -1)
@@ -258,15 +269,15 @@ export default function Example() {
     refreshData();
   }, []);
 
-  // const [isModalVisible, setModalVisible] = useState(false);
 
   function toggleModal(item) {
     item.isModalVisible = !item.isModalVisible;
     setItems([...items], items);
   }
 
-  function toggleHighlighted(item) {
+  async function toggleHighlighted(item) {
     item.isHighlighted = !item.isHighlighted;
+    await cache.set(item.name, JSON.stringify(item));
     setItems([...items], items);
   }
 
@@ -295,8 +306,8 @@ export default function Example() {
 
 
                 {/* Indices */}
-                <View style={[styles.itemContainer, item.id > 0 ? item.isHighlighted ? { borderColor: "#000", backgroundColor: "red", width: Dimensions.get('window').width * 0.08 } : { borderColor: "#000", backgroundColor: "#008000", width: Dimensions.get('window').width * 0.08 } : {display: 'none'}]}>
-                {/* <View style={[styles.itemContainer, { borderColor: item.pointsColor, backgroundColor: item.backgroundColor, width: Dimensions.get('window').width * 0.08 }]}> */}
+                <View style={[styles.itemContainer, item.id > 0 ? item.isHighlighted ? { borderColor: "#000", backgroundColor: "red", width: Dimensions.get('window').width * 0.08 } : { borderColor: "#000", backgroundColor: "#008000", width: Dimensions.get('window').width * 0.08 } : { display: 'none' }]}>
+                  {/* <View style={[styles.itemContainer, { borderColor: item.pointsColor, backgroundColor: item.backgroundColor, width: Dimensions.get('window').width * 0.08 }]}> */}
                   {/* <Text adjustsFontSizeToFit={true} style={[styles.itemName, { fontSize: 25, color: item.pointsColor }]}>{index - 1}</Text> */}
                   <Text adjustsFontSizeToFit={true} style={[styles.itemName, { fontSize: 20, color: "#fff" }]}>{index - 1}</Text>
                 </View>
