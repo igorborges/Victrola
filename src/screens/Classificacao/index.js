@@ -19,7 +19,7 @@ export default function Example() {
   var clubes = { 373: "https://s.glbimg.com/es/sde/f/organizacoes/2020/07/02/atletico-go-2020-45.png", 276: "https://s.glbimg.com/es/sde/f/organizacoes/2014/04/14/sao_paulo_45x45.png", 356: "https://s.glbimg.com/es/sde/f/organizacoes/2018/06/10/fortaleza-ec-45px.png", 292: "https://s.glbimg.com/es/sde/f/organizacoes/2015/07/21/sport45.png", 277: "https://s.glbimg.com/es/sde/f/organizacoes/2014/04/14/santos_45x45.png", 293: "https://s.glbimg.com/es/sde/f/organizacoes/2019/09/09/Athletico-PR-45x45.png", 263: "https://s.glbimg.com/es/sde/f/organizacoes/2019/02/04/botafogo-45.png", 262: "https://s.glbimg.com/es/sde/f/organizacoes/2018/04/09/Flamengo-45.png", 354: "https://s.glbimg.com/es/sde/f/organizacoes/2019/10/10/ceara-45x45.png", 267: "https://s.glbimg.com/es/sde/f/organizacoes/2016/07/29/Vasco-45.png", 266: "https://s.glbimg.com/es/sde/f/organizacoes/2014/04/14/fluminense_45x45.png", 265: "https://s.glbimg.com/es/sde/f/organizacoes/2014/04/14/bahia_45x45.png", 264: "https://s.glbimg.com/es/sde/f/organizacoes/2019/09/30/Corinthians_45.png", 280: "https://s.glbimg.com/es/sde/f/organizacoes/2020/01/01/45.png", 294: "https://s.glbimg.com/es/sde/f/organizacoes/2017/03/29/coritiba45.png", 282: "https://s.glbimg.com/es/sde/f/organizacoes/2017/11/23/Atletico-Mineiro-escudo45px.png", 285: "https://s.glbimg.com/es/sde/f/organizacoes/2016/05/03/inter45.png", 284: "https://s.glbimg.com/es/sde/f/organizacoes/2014/04/14/gremio_45x45.png", 290: "https://s.glbimg.com/es/sde/f/organizacoes/2019/05/01/Goias_45px.png", 275: "https://s.glbimg.com/es/sde/f/organizacoes/2014/04/14/palmeiras_45x45.png", }
 
   const cache = new Cache({
-    namespace: "myapp",
+    namespace: "victrola1",
     policy: {
       maxEntries: 50000
     },
@@ -136,7 +136,7 @@ export default function Example() {
         if (element.id != 0) {
 
           try {            
-            console.log(await cache.peek(element.name) == undefined)
+            // console.log(await cache.peek(element.name) == undefined)
 
             if (await cache.peek(element.name) != undefined) {
 
@@ -197,7 +197,6 @@ export default function Example() {
     } else {
       await cache.clearAll()
       items.forEach(element => {
-
         items.sort((a, b) => (a.pts <= b.pts) ? 1 : -1)
         if (element.id != 0) {
           try {
@@ -380,7 +379,7 @@ export default function Example() {
                     </View>
 
                     {/* botao voltar */}
-                    <TouchableHighlight onPress={() => toggleModal(item)} underlayColor={'#008000'} >
+                    <TouchableHighlight underlayColor={'#008000'} onPress={() => toggleModal(item)} >
                       <View style={[{ position: "relative" }, { borderWidth: 2, justifyContent: 'center', alignItems: 'center', fontSize: 20, height: Dimensions.get('window').height * 0.06, width: Dimensions.get('window').width * 0.95, marginVertical: '5%', marginHorizontal: '-17.5%' }]}>
                         <Text adjustsFontSizeToFit={true} numberOfLines={1} style={[{ fontSize: 20 }]}>Voltar</Text>
                       </View>
