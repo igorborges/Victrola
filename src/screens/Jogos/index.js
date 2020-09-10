@@ -279,7 +279,7 @@ export default function Example() {
                         // console.log("antes: " + element.capitaoidAway)
                         element.atletasAway = res2.data.atletas
                         element.pegouAtletasAway = true
-                        element.capitaoidAway = res2.data.capitao_id;
+                        element.capitaoIdAway = res2.data.capitao_id;
                         items[items.indexOf(items.find(k => k.nameHome == element.nameHome && k.nameAway == element.nameAway))] = element
                         // console.log("depois: " + element.capitaoidAway)
                         // console.log(atletasPontuando[res2.data.capitao_id].apelido)
@@ -686,7 +686,7 @@ export default function Example() {
                         <Image source={{ uri: clubes[x.clube_id] }} style={{ justifyContent: 'center', alignSelf: 'center', marginVertical: Dimensions.get('window').height * 0.005, marginHorizontal: Dimensions.get('window').width * 0, height: Dimensions.get('window').width * 0.04, width: Dimensions.get('window').width * 0.04, resizeMode: 'stretch' }} />
                         {/* </View> */}
 
-                        {/*  Posicoes Jogadores Home*/}
+                        {/* Posicoes Jogadores Home*/}
                         <View style={[styles.itemContainer, { borderWidth: 1, borderColor: item.textColorHome, backgroundColor: item.backgroundColorHome, width: Dimensions.get('window').width * 0.05 }]}>
                           <Text adjustsFontSizeToFit={true} numberOfLines={1} style={[styles.itemName, { fontSize: 12, color: item.pointsColorHome }]}>{posicoes[x.posicao_id]}</Text>
                         </View>
