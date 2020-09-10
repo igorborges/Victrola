@@ -19,7 +19,7 @@ export default function Example() {
   var clubes = { 373: "https://s.glbimg.com/es/sde/f/organizacoes/2020/07/02/atletico-go-2020-45.png", 276: "https://s.glbimg.com/es/sde/f/organizacoes/2014/04/14/sao_paulo_45x45.png", 356: "https://s.glbimg.com/es/sde/f/organizacoes/2018/06/10/fortaleza-ec-45px.png", 292: "https://s.glbimg.com/es/sde/f/organizacoes/2015/07/21/sport45.png", 277: "https://s.glbimg.com/es/sde/f/organizacoes/2014/04/14/santos_45x45.png", 293: "https://s.glbimg.com/es/sde/f/organizacoes/2019/09/09/Athletico-PR-45x45.png", 263: "https://s.glbimg.com/es/sde/f/organizacoes/2019/02/04/botafogo-45.png", 262: "https://s.glbimg.com/es/sde/f/organizacoes/2018/04/09/Flamengo-45.png", 354: "https://s.glbimg.com/es/sde/f/organizacoes/2019/10/10/ceara-45x45.png", 267: "https://s.glbimg.com/es/sde/f/organizacoes/2016/07/29/Vasco-45.png", 266: "https://s.glbimg.com/es/sde/f/organizacoes/2014/04/14/fluminense_45x45.png", 265: "https://s.glbimg.com/es/sde/f/organizacoes/2014/04/14/bahia_45x45.png", 264: "https://s.glbimg.com/es/sde/f/organizacoes/2019/09/30/Corinthians_45.png", 280: "https://s.glbimg.com/es/sde/f/organizacoes/2020/01/01/45.png", 294: "https://s.glbimg.com/es/sde/f/organizacoes/2017/03/29/coritiba45.png", 282: "https://s.glbimg.com/es/sde/f/organizacoes/2017/11/23/Atletico-Mineiro-escudo45px.png", 285: "https://s.glbimg.com/es/sde/f/organizacoes/2016/05/03/inter45.png", 284: "https://s.glbimg.com/es/sde/f/organizacoes/2014/04/14/gremio_45x45.png", 290: "https://s.glbimg.com/es/sde/f/organizacoes/2019/05/01/Goias_45px.png", 275: "https://s.glbimg.com/es/sde/f/organizacoes/2014/04/14/palmeiras_45x45.png", }
 
   const cache = new Cache({
-    namespace: "victrola1",
+    namespace: "victrola",
     policy: {
       maxEntries: 50000
     },
@@ -101,6 +101,7 @@ export default function Example() {
   var firstTime = true
 
   async function refreshData() {
+    // await cache.clearAll()
     // console.log("------entrou aqui---------------")
     // axios.get("https://cartolaigor-pjzxn.hoverfly.io/mercado/status")    
     await axios.get("https://api.cartolafc.globo.com/mercado/status")
@@ -139,9 +140,8 @@ export default function Example() {
             // console.log(await cache.peek(element.name) == undefined)
 
             if (await cache.peek(element.name) != undefined) {
-
               element = JSON.parse(await cache.get(element.name));              
-              console.log("buscou da cache");
+              // console.log("buscou da cache");
             } else {
 
               setTimeout(async function () {
@@ -149,7 +149,7 @@ export default function Example() {
                   axios.get("https://api.cartolafc.globo.com/time/id/" + element.id + "/" + rodada_atual)
                     .then(async res => {
                       if (res.status == 200) {
-                        console.log("buscou do backend")
+                        // console.log("buscou do backend")
                         element.atletas = res.data.atletas;
                         element.pegouAtletas = true
                         element.capitaoId = res.data.capitao_id;
