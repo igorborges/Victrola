@@ -26,6 +26,14 @@ export default function Example() {
     backend: AsyncStorage
   });
 
+  const generalCache = new Cache({
+    namespace: "general",
+    policy: {
+      maxEntries: 50000
+    },
+    backend: AsyncStorage
+  });
+
 
   const [items, setItems] = React.useState([
     { name: "", backgroundColor: "#008000", textColor: "#008000", pointsColor: "#008000", id: 0, pts: 10001 },
@@ -67,8 +75,11 @@ export default function Example() {
     { name: "vernochi82", slug: require("../../assets/escudos/vernochi82.png"), backgroundColor: "#a64b00", textColor: "#ff241d", pointsColor: "#ff241d", id: 25584876, maiorPontuacao: 56, pontuacaoUltimaRodada: 56, pts: 0, atletas: [], pegouAtletas: false, numAtletasPontuando: 0, capitaoId: 0, distrital: false, isModalVisible: false, isHighlighted: false },
     { name: "Victrola F.C.", slug: require("../../assets/escudos/victrola-f-c.png"), backgroundColor: "#808080", textColor: "#bf1d17", pointsColor: "#bf1d17", id: 13946184, maiorPontuacao: 55, pontuacaoUltimaRodada: 19, pts: 0, atletas: [], pegouAtletas: false, numAtletasPontuando: 0, capitaoId: 0, distrital: false, isModalVisible: false, isHighlighted: false },
     { name: "VilãoFC", slug: require("../../assets/escudos/vilaofc.png"), backgroundColor: "#000000", textColor: "#ffffff", pointsColor: "#ffffff", id: 2370283, maiorPontuacao: 68, pontuacaoUltimaRodada: 58, pts: 0, atletas: [], pegouAtletas: false, numAtletasPontuando: 0, capitaoId: 0, distrital: false, isModalVisible: false, isHighlighted: false },
-    { name: "OTOPATAMAR cc", slug: require("../../assets/escudos/otopatamar-cc.png"), backgroundColor: "#000000", textColor: "#bf1d17", pointsColor: "#bf1d17", id: 26126210, maiorPontuacao: 64, pontuacaoUltimaRodada: 45, pts: 0, atletas: [], pegouAtletas: false, numAtletasPontuando: 0, capitaoId: 0, distrital: true, isModalVisible: false, isHighlighted: false },
-    { name: "Victao Futebol Clube", slug: require("../../assets/escudos/victao-futebol-clube.png"), backgroundColor: "#ffcb00", textColor: "#063780", pointsColor: "#063780", id: 2571803, maiorPontuacao: 15, pontuacaoUltimaRodada: 15, pts: 0, atletas: [], pegouAtletas: false, numAtletasPontuando: 0, capitaoId: 0, distrital: true, isModalVisible: false, isHighlighted: false },
+    { name: "OTOPATAMAR cc", slug: require("../../assets/escudos/otopatamar-cc.png"), backgroundColor: "#000000", textColor: "#bf1d17", pointsColor: "#bf1d17", id: 26126210, maiorPontuacao: 64, pontuacaoUltimaRodada: 45, pts: 0, atletas: [], pegouAtletas: false, numAtletasPontuando: 0, capitaoId: 0, distrital: false, isModalVisible: false, isHighlighted: false },
+    { name: "Victao Futebol Clube", slug: require("../../assets/escudos/victao-futebol-clube.png"), backgroundColor: "#ffcb00", textColor: "#063780", pointsColor: "#063780", id: 2571803, maiorPontuacao: 15, pontuacaoUltimaRodada: 15, pts: 0, atletas: [], pegouAtletas: false, numAtletasPontuando: 0, capitaoId: 0, distrital: false, isModalVisible: false, isHighlighted: false },
+    { name: "El mordedor", slug: require("../../assets/escudos/el-mordedor.png"), backgroundColor: "#ff241d", textColor: "#000000", pointsColor: "#000000", id: 27003779, maiorPontuacao: 33, pontuacaoUltimaRodada: 0, pts: 0, atletas: [], pegouAtletas: false , numAtletasPontuando: 0, capitaoId: 0, distrital: false, isModalVisible: false, isHighlighted: false },
+    { name: "CERQUEIRA.BSB", slug: require("../../assets/escudos/cerqueira-bsb.png"), backgroundColor: "#a64b00", textColor: "#808080", pointsColor: "#808080", id: 11096379, maiorPontuacao: 50, pontuacaoUltimaRodada: 0, pts: 0, atletas: [], pegouAtletas: false , numAtletasPontuando: 0, capitaoId: 0, distrital: false, isModalVisible: false, isHighlighted: false }
+
 
     // { name: "", backgroundColor: "#008000", textColor: "#008000", pointsColor: "#008000", id: 0, pts: -100 },
     // { name: "", backgroundColor: "#008000", textColor: "#008000", pointsColor: "#008000", id: 0, pts: -101 },        
@@ -101,6 +112,7 @@ export default function Example() {
   var firstTime = true
 
   async function refreshData() {
+    // await generalCache.clearAll()
     // await cache.clearAll()
     // console.log("------entrou aqui---------------")
     // axios.get("https://cartolaigor-pjzxn.hoverfly.io/mercado/status")    
@@ -276,8 +288,33 @@ export default function Example() {
 
   async function toggleHighlighted(item) {
     item.isHighlighted = !item.isHighlighted;
+    item.highlightColor = "yellow"
+    // await cache.set(item.name, JSON.stringify(item));
+    // setItems([...items], items);
+
+    var againstWho = await generalCache.get(item.id)
+    // console.log("entrou aqui: " + item.name)
+    // JSON.parse(asd);
+    // console.log(asd);
+    // console.log(await generalCache.getAll());
+    // console.log("ainda aqui: ")
+    console.log(againstWho)
+    
+    items.forEach(time => {
+      againstWho.forEach(x => {
+        if(time.id == x){
+          console.log(x)
+          time.isHighlighted = !time.isHighlighted;
+          time.highlightColor = "red"
+          // console.log(time.name)          
+        }
+      })
+    })
     await cache.set(item.name, JSON.stringify(item));
     setItems([...items], items);
+    
+
+    // console.log(asd.get());
   }
 
   return (
@@ -305,7 +342,7 @@ export default function Example() {
 
 
                 {/* Indices */}
-                <View style={[styles.itemContainer, item.id > 0 ? item.isHighlighted ? { borderColor: "#000", backgroundColor: "red", width: Dimensions.get('window').width * 0.08 } : { borderColor: "#000", backgroundColor: "#008000", width: Dimensions.get('window').width * 0.08 } : { display: 'none' }]}>
+                <View style={[styles.itemContainer, item.id > 0 ? item.isHighlighted ? { borderColor: "#000", backgroundColor: item.highlightColor, width: Dimensions.get('window').width * 0.08 } : { borderColor: "#000", backgroundColor: "#008000", width: Dimensions.get('window').width * 0.08 } : { display: 'none' }]}>
                   {/* <View style={[styles.itemContainer, { borderColor: item.pointsColor, backgroundColor: item.backgroundColor, width: Dimensions.get('window').width * 0.08 }]}> */}
                   {/* <Text adjustsFontSizeToFit={true} style={[styles.itemName, { fontSize: 25, color: item.pointsColor }]}>{index - 1}</Text> */}
                   <Text adjustsFontSizeToFit={true} style={[styles.itemName, { fontSize: 20, color: "#fff" }]}>{index - 1}</Text>
