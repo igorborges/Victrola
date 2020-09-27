@@ -126,6 +126,8 @@ export default function Example() {
           rodada_atual = res.data.rodada_atual - 1
         }
         items[1].name = header + rodada_atual
+        items[0].rodada_atual = rodada_atual
+
         setItems(items);
       });
 
@@ -313,7 +315,7 @@ export default function Example() {
     //     }
     //   })
     // })
-    await cache.set(item.name + rodada_atual, JSON.stringify(item));
+    await cache.set(item.name + items[0].rodada_atual, JSON.stringify(item));
     setItems([...items], items);
     
 
