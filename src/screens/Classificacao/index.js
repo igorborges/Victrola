@@ -26,13 +26,13 @@ export default function Example() {
     backend: AsyncStorage
   });
 
-  const generalCache = new Cache({
-    namespace: "general",
-    policy: {
-      maxEntries: 50000
-    },
-    backend: AsyncStorage
-  });
+  // const generalCache = new Cache({
+  //   namespace: "general",
+  //   policy: {
+  //     maxEntries: 50000
+  //   },
+  //   backend: AsyncStorage
+  // });
 
 
   const [items, setItems] = React.useState([
@@ -151,8 +151,8 @@ export default function Example() {
           try {            
             // console.log(await cache.peek(element.name) == undefined)
 
-            if (await cache.peek(element.name) != undefined) {
-              element = JSON.parse(await cache.get(element.name));              
+            if (await cache.peek(element.name + rodada_atual) != undefined) {
+              element = JSON.parse(await cache.get(element.name + rodada_atual));              
               // console.log("buscou da cache");
             } else {
 
@@ -168,7 +168,7 @@ export default function Example() {
                         items[items.indexOf(items.find(k => k.name == element.name))] = element
                         element.atletas.sort((a, b) => (a.posicao_id >= b.posicao_id) ? 1 : -1)
                         setItems([...items], items);
-                        await cache.set(element.name, JSON.stringify(element));
+                        await cache.set(element.name + rodada_atual, JSON.stringify(element));
                       }
                     })
                 }
@@ -207,7 +207,7 @@ export default function Example() {
         }
       });
     } else {
-      await cache.clearAll()
+      // await cache.clearAll()
       items.forEach(element => {
         items.sort((a, b) => (a.pts <= b.pts) ? 1 : -1)
         if (element.id != 0) {
@@ -288,29 +288,32 @@ export default function Example() {
 
   async function toggleHighlighted(item) {
     item.isHighlighted = !item.isHighlighted;
-    item.highlightColor = "yellow"
+    // item.highlightColor = "red"
     // await cache.set(item.name, JSON.stringify(item));
     // setItems([...items], items);
 
-    var againstWho = await generalCache.get(item.id)
+    // var againstWho = await generalCache.get(item.id)
     // console.log("entrou aqui: " + item.name)
     // JSON.parse(asd);
     // console.log(asd);
     // console.log(await generalCache.getAll());
     // console.log("ainda aqui: ")
-    console.log(againstWho)
     
-    items.forEach(time => {
-      againstWho.forEach(x => {
-        if(time.id == x){
-          console.log(x)
-          time.isHighlighted = !time.isHighlighted;
-          time.highlightColor = "red"
-          // console.log(time.name)          
-        }
-      })
-    })
-    await cache.set(item.name, JSON.stringify(item));
+    
+    
+    // console.log(againstWho)
+    
+    // items.forEach(time => {
+    //   againstWho.forEach(x => {
+    //     if(time.id == x){
+    //       console.log(x)
+    //       time.isHighlighted = !time.isHighlighted;
+    //       time.highlightColor = "red"
+    //       // console.log(time.name)          
+    //     }
+    //   })
+    // })
+    await cache.set(item.name + rodada_atual, JSON.stringify(item));
     setItems([...items], items);
     
 
@@ -342,7 +345,7 @@ export default function Example() {
 
 
                 {/* Indices */}
-                <View style={[styles.itemContainer, item.id > 0 ? item.isHighlighted ? { borderColor: "#000", backgroundColor: item.highlightColor, width: Dimensions.get('window').width * 0.08 } : { borderColor: "#000", backgroundColor: "#008000", width: Dimensions.get('window').width * 0.08 } : { display: 'none' }]}>
+                <View style={[styles.itemContainer, item.id > 0 ? item.isHighlighted ? { borderColor: "#000", backgroundColor: "red", width: Dimensions.get('window').width * 0.08 } : { borderColor: "#000", backgroundColor: "#008000", width: Dimensions.get('window').width * 0.08 } : { display: 'none' }]}>
                   {/* <View style={[styles.itemContainer, { borderColor: item.pointsColor, backgroundColor: item.backgroundColor, width: Dimensions.get('window').width * 0.08 }]}> */}
                   {/* <Text adjustsFontSizeToFit={true} style={[styles.itemName, { fontSize: 25, color: item.pointsColor }]}>{index - 1}</Text> */}
                   <Text adjustsFontSizeToFit={true} style={[styles.itemName, { fontSize: 20, color: "#fff" }]}>{index - 1}</Text>
