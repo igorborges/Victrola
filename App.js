@@ -1,21 +1,46 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React  from 'react';
+import {NavigationContainer} from '@react-navigation/native'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-export default function App() {
+import Jogos from './src/screens/Jogos'
+import Classificacao from './src/screens/Classificacao'
+
+const Tab = createBottomTabNavigator();
+
+export default function App() {  
+  
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    
+    <NavigationContainer>
+      <Tab.Navigator initialRouteName="Feed"
+      tabBarOptions={{
+        activeTintColor: '#009',
+        inactiveTintColor: '#000',
+        activeBackgroundColor: "#008000",
+        inactiveBackgroundColor: "#008000",
+        labelPosition: "beside-icon",
+        adaptive: false,
+        tabBarVisible: false
+      }}>        
+        <Tab.Screen name="Home" component={Classificacao}
+        options={{
+          tabBarLabel: 'Classificação',          
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="home" color={color} size={size} />
+          ),
+        }}/>
+
+        <Tab.Screen name="Melhores" component={Jogos} options={{
+          tabBarLabel: 'Séries A-F',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="account" color={color} size={size} />
+          ),
+        }}/>
+
+      </Tab.Navigator>
+    </NavigationContainer>
+    
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

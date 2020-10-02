@@ -1,14 +1,14 @@
 {
   "expo": {
-    "name": "victrola",
+    "name": "Premier Victrola",
     "slug": "victrola",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/victrolasquare.png",
     "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#000",
+      "image": "./assets/victrola.png",
+      "resizeMode": "contain"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -17,10 +17,14 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "com.victrola.appvictrola2"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/victrolasquare.png"
+    },
+    "android": {
+      "package": "com.victrola.appvictrola2",
+      "versionCode": 1
     }
   }
 }
